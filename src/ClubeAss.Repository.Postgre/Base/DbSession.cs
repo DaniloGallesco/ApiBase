@@ -26,12 +26,13 @@ namespace ClubeAss.Repository.Postegre.Base
 
         }
 
-        public void Dispose() {
+        public void Dispose()
+        {
             Transaction?.Dispose();
             Connection?.Close();
             Connection?.Dispose();
 
         }
-        
+
     }
 }

@@ -21,10 +21,10 @@ namespace ClubeAss.Repository.Postegre
         public async void Add(Customer customer)
         {
 
-            DynamicParameters parameter = new DynamicParameters();            
+            DynamicParameters parameter = new DynamicParameters();
             parameter.Add("@Nome", customer.Nome, DbType.String, ParameterDirection.Input);
             await _session.Connection.ExecuteAsync($"INSERT INTO public.\"Customer\" (\"Nome\") VALUES(@Nome)", parameter, _session.Transaction, null, CommandType.Text);
-          
+
         }
 
         public async void Update(Customer customer)
@@ -34,7 +34,7 @@ namespace ClubeAss.Repository.Postegre
             parameter.Add("@Nome", customer.Nome, DbType.String, ParameterDirection.Input);
 
             await _session.Connection.ExecuteAsync($"Update public.\"Customer\" set \"Nome\" = @Nome where \"Id\" = @id", parameter, _session.Transaction, null, CommandType.Text);
-            
+
         }
 
         public Task<IEnumerable<Customer>> GetAll()
@@ -52,11 +52,16 @@ namespace ClubeAss.Repository.Postegre
 
         public async void Remove(Guid id)
         {
-            DynamicParameters parameter = new DynamicParameters();
-            parameter.Add("@Id", id, DbType.Guid, ParameterDirection.Input);
 
-            await _session.Connection.ExecuteAsync($"Delete FROM public.\"Customer\" where \"Id\" = @id", parameter, _session.Transaction, null, CommandType.Text);
-           
+        }
+
+        public void Remove(Customer customer)
+        {
+            DynamicParameters parameter = new DynamicParameters();
+            parameter.Add("@Id", customer.Id, DbType.Guid, ParameterDirection.Input);
+
+            var a = _session.Connection.ExecuteAsync($"Delete FROM public.\"Customer\" where \"Id\" = @id", parameter, _session.Transaction, null, CommandType.Text).Result;
+
         }
     }
 }

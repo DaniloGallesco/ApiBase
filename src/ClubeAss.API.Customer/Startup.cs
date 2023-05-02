@@ -25,9 +25,8 @@ namespace ClubeAss.API.Customer
             services.AddServiceHealthcheckConfig(Configuration);
             services.AddServiceSwaggerConfig(Configuration);
             services.AddServiceAutoMapperConfig();
-            services.AddElasticsearchConfig(Configuration);
             services.AddDatabaseConfig(Configuration);
-            //services.AddKeyCloakConfig(Configuration);
+            services.ApiVersionServiceConfig(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
@@ -37,7 +36,6 @@ namespace ClubeAss.API.Customer
             app.AddConfigureHealthcheckConfig(env);
             app.AddConfigureSwaggerConfig(env);
             app.AddConfigurePrometheusConfig(env);
-            app.AddConfigureSplunkConfig(env, loggerFactory);
 
             //app.AddConfigureKeyCloakConfig(env);
         }

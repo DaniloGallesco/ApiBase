@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace ClubeAss.API.Customer.Configurations
 {
@@ -16,7 +16,8 @@ namespace ClubeAss.API.Customer.Configurations
         public static IServiceCollection AddServiceSwaggerConfig(this IServiceCollection services, IConfiguration configuration)
         {
 
-            var schema = configuration.GetSection("Keycloack").GetSection("Schema").Value;
+            //services.AddSwaggerGen();
+            //var schema = configuration.GetSection("Keycloack").GetSection("Schema").Value;
 
             // Configurando o serviço de documentação do Swagger
             services.AddSwaggerGen(c =>
@@ -45,26 +46,6 @@ namespace ClubeAss.API.Customer.Configurations
                             new string[] {}
                     }
                 });
-
-                c.SwaggerDoc("v1",
-                    new Microsoft.OpenApi.Models.OpenApiInfo
-                    {
-                        Title = "API Core - Customer",
-                        Version = Assembly.GetExecutingAssembly().GetName().Version.ToString(),
-                        Description = "Api - Customer",
-                        TermsOfService = new Uri("https://www.google.com.br/"),
-                        Contact = new Microsoft.OpenApi.Models.OpenApiContact
-                        {
-                            Name = "Api Customer",
-                            Email = string.Empty,
-                            Url = new Uri("https://www.google.com.br/"),
-                        },
-                        License = new Microsoft.OpenApi.Models.OpenApiLicense
-                        {
-                            Name = "© Copyright ClubeAss. Todos os Direitos Reservados.",
-                            Url = new Uri("https://www.google.com.br/"),
-                        }
-                    });
             });
 
             return services;
@@ -75,10 +56,17 @@ namespace ClubeAss.API.Customer.Configurations
             if (app == null) throw new ArgumentNullException(nameof(app));
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
+
+            var apiVersionDescriptionProvider = app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>();
+
+            app.UseSwaggerUI(options =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1");
-                c.RoutePrefix = "api/swagger";
+                options.RoutePrefix = "api/swagger";
+                foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                        description.GroupName.ToUpperInvariant());
+                }
             });
 
             return app;

@@ -44,6 +44,9 @@ namespace Velinho_API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureKestrel((x =>
+                        x.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(15) //set timeout default
+                    ));
                 });
     }
 }

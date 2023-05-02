@@ -3,7 +3,9 @@ using System.Net.Mail;
 
 namespace ClubeAss.API.Customer.Controllers.V1
 {
-    [Route("api/[controller]")]
+
+    [Route("API/{version:apiVersion}/[controller]")]
+    [ApiVersion("2.0")]
     [ApiController]
     public class EmailController : ControllerBase
     {

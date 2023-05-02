@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace ClubeAss.API.Customer.Controllers.V1
 {
-    [Route("API/V1/Customer")]
+    [Route("API/{version:apiVersion}/Customer")]
+    [ApiVersion("1.0")]
     [ApiController]
     public class CustomerController : ControllerBase
     {
