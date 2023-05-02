@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace ClubeAss.API.Customer.Controllers.V1
 {
-    [Route("API/{version:apiVersion}/Customer")]
-    [ApiVersion("1.0")]
     [ApiController]
+    [ApiVersion("1.0")]   
+    [Route("API/v{version:apiVersion}/Customer")]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerApplication _customerApplication;
@@ -42,6 +42,7 @@ namespace ClubeAss.API.Customer.Controllers.V1
 
         // GET: api/<ClienteController>
         [HttpGet]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> List()
         {
             BaseResponse response;
@@ -60,6 +61,7 @@ namespace ClubeAss.API.Customer.Controllers.V1
 
         // POST api/<ClienteController>
         [HttpPost]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> Post([FromBody] CustomerAddRequest cliente)
         {
             var _validator = await _validatorCustomerAddRequest.ValidateAsync(cliente);
@@ -79,6 +81,7 @@ namespace ClubeAss.API.Customer.Controllers.V1
 
         // GET api/<ClienteController>/5
         [HttpGet("{id}")]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> Get(Guid id)
         {
 
@@ -108,6 +111,7 @@ namespace ClubeAss.API.Customer.Controllers.V1
 
         // PUT api/<ClienteController>/5
         [HttpPut("{id}")]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> Put(Guid id, [FromBody] CustomerUpdateRequest request)
         {
 
@@ -132,6 +136,7 @@ namespace ClubeAss.API.Customer.Controllers.V1
 
         // DELETE api/<ClienteController>/5
         [HttpDelete("{id}")]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var request = new CustomerDeleteRequest(id);

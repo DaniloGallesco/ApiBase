@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
 
-namespace ClubeAss.API.Customer.Controllers.V1
+namespace ClubeAss.API.Customer.Controllers.V2
 {
-
-    [Route("API/{version:apiVersion}/[controller]")]
+    [ApiController]    
     [ApiVersion("2.0")]
-    [ApiController]
+    [Route("API/v{version:apiVersion}/[controller]")]    
     public class EmailController : ControllerBase
     {
         [HttpGet]
+        [MapToApiVersion("2.0")]
         public void Index()
         {
             var smtpClient = new SmtpClient("localhost")

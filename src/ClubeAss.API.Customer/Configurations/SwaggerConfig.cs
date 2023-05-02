@@ -15,10 +15,7 @@ namespace ClubeAss.API.Customer.Configurations
     {
         public static IServiceCollection AddServiceSwaggerConfig(this IServiceCollection services, IConfiguration configuration)
         {
-
-            //services.AddSwaggerGen();
-            //var schema = configuration.GetSection("Keycloack").GetSection("Schema").Value;
-
+                        
             // Configurando o serviço de documentação do Swagger
             services.AddSwaggerGen(c =>
             {
