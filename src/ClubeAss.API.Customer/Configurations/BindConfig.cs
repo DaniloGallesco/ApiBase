@@ -16,5 +16,5 @@ namespace ClubeAss.API.Customer.Configurations
     }
 
 
- 
+
 }

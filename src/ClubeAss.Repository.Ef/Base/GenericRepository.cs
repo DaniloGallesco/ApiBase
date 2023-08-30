@@ -1,6 +1,4 @@
-﻿using ClubeAss.Domain.Enum.Base;
-using ClubeAss.Domain.Interface.Application.Base;
-using ClubeAss.Domain.Interface.Repository.IBase;
+﻿using ClubeAss.Domain.Interface.Repository.IBase;
 using ClubeAss.Repository.Ef.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -45,6 +43,6 @@ namespace ClubeAss.Repository.Ef.Base
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
-       
+
     }
 }

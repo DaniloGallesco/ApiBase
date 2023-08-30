@@ -25,10 +25,11 @@ namespace ClubeAss.API.Customer
             services.AddServiceHealthcheckConfig(Configuration);
             services.AddServiceSwaggerConfig(Configuration);
             services.AddServiceAutoMapperConfig();
+            services.AddMediatrConfig();
             services.AddDatabaseConfig(Configuration);
             services.ApiVersionServiceConfig();
             services.BindServiceConfig(Configuration);
-            services.HangfireServiceConfig();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
@@ -38,7 +39,6 @@ namespace ClubeAss.API.Customer
             app.AddConfigureHealthcheckConfig(env);
             app.AddConfigureSwaggerConfig(env);
             app.AddConfigurePrometheusConfig(env);
-            app.AddHangfireConfigureConfig();
 
         }
     }

@@ -1,9 +1,7 @@
 ﻿using ClubeAss.API.Customer.Validators.Customer;
 using ClubeAss.API.Customer.ViewModel.Customer;
-using ClubeAss.Application;
 using ClubeAss.Application.Extensions.Cache;
 using ClubeAss.Domain.Enum.Base;
-using ClubeAss.Domain.Interface.Application;
 using ClubeAss.Domain.Interface.Application.Base;
 using ClubeAss.Domain.Interface.Repository;
 using ClubeAss.Domain.Interface.Repository.IBase;
@@ -25,7 +23,7 @@ namespace ClubeAss.API.Customer.Configurations
         public static IServiceCollection AddServiceDependencyInjectionConfig(this IServiceCollection services, IConfiguration configuration)
         {
             #region Application
-            services.AddTransient<ICustomerApplication, CustomerApplication>();
+            //services.AddTransient<ICustomerApplication, CustomerApplication>();
             #endregion
 
             #region Repository
@@ -46,7 +44,7 @@ namespace ClubeAss.API.Customer.Configurations
 
 
 
-            
+
             services.AddTransient<MemoryCacheService>();
             services.AddTransient<Func<CacheTech, ICacheService>>(serviceProvider => key =>
             {

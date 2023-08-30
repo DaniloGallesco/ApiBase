@@ -1,9 +1,8 @@
 ﻿using ClubeAss.API.Customer.ViewModel.Customer;
 using ClubeAss.Domain.Commands;
-using ClubeAss.Domain.Interface.Application;
-using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,29 +14,11 @@ namespace ClubeAss.API.Customer.Controllers.V1
     [Route("API/v{version:apiVersion}/Customer")]
     public class CustomerController : ControllerBase
     {
-        private readonly ICustomerApplication _customerApplication;
-        private readonly IValidator<CustomerAddRequest> _validatorCustomerAddRequest;
-        private readonly IValidator<CustomerDeleteRequest> _validatorCustomerDeleteRequestValidator;
-        private readonly IValidator<CustomerGetRequest> _validatorCustomerGetRequestValidator;
-        private readonly IValidator<CustomerUpdateRequest> _validatorCustomerUpdateRequestValidator;
-        private readonly IMemoryCache _cache;
+        private readonly IMediator _mediator;
 
-
-
-        public CustomerController(ICustomerApplication customerApplication,
-            IValidator<CustomerAddRequest> validatorCustomerAddRequest,
-            IValidator<CustomerDeleteRequest> validatorCustomerDeleteRequestValidator,
-            IValidator<CustomerGetRequest> validatorCustomerGetRequestValidator,
-            IValidator<CustomerUpdateRequest> validatorCustomerUpdateRequestValidator,
-            IMemoryCache memoryCache
-            )
+        public CustomerController(IMediator mediator, ILogger<CustomerController> logger)
         {
-            _customerApplication = customerApplication;
-            _validatorCustomerAddRequest = validatorCustomerAddRequest;
-            _validatorCustomerDeleteRequestValidator = validatorCustomerDeleteRequestValidator;
-            _validatorCustomerGetRequestValidator = validatorCustomerGetRequestValidator;
-            _validatorCustomerUpdateRequestValidator = validatorCustomerUpdateRequestValidator;
-            _cache = memoryCache;
+            _mediator = mediator;
         }
 
         // GET: api/<ClienteController>
@@ -45,28 +26,19 @@ namespace ClubeAss.API.Customer.Controllers.V1
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> List()
         {
-            BaseResponse response;
+            var response = await _mediator.Send(new CustomerListRequest());
 
-            response = await _customerApplication.GetAll();
-            return new ObjectResult(response) { StatusCode = response.StatusCode.GetHashCode() };
+            return StatusCode(HttpStatusCode.OK.GetHashCode(), response);
         }
 
         // POST api/<ClienteController>
         [HttpPost]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Post([FromBody] CustomerAddRequest cliente)
+        public async Task<IActionResult> Post(CustomerAddRequest cliente)
         {
-            var _validator = await _validatorCustomerAddRequest.ValidateAsync(cliente);
+            var response = await _mediator.Send(cliente);
 
-            if (!_validator.IsValid)
-            {
-                var validador = Extensions.Fluentvalidation.FluentValidation.Errors(_validator.Errors).Result;
-                return new ObjectResult(validador) { StatusCode = validador.StatusCode.GetHashCode() };
-            }
-
-            var response = await _customerApplication.Add(cliente);
-
-            return StatusCode(response.StatusCode.GetHashCode());
+            return StatusCode(response.StatusCode.GetHashCode(), response.Content);
         }
 
         // GET api/<ClienteController>/5
@@ -74,45 +46,19 @@ namespace ClubeAss.API.Customer.Controllers.V1
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> Get(Guid id)
         {
+            var response = await _mediator.Send(new CustomerGetRequest(id));
 
-            var request = new CustomerGetRequest(id);
-            var _validator = await _validatorCustomerGetRequestValidator.ValidateAsync(request);
-
-            if (!_validator.IsValid)
-            {
-                var validador = Extensions.Fluentvalidation.FluentValidation.Errors(_validator.Errors).Result;
-                return new ObjectResult(validador) { StatusCode = validador.StatusCode.GetHashCode() };
-            }
-
-            BaseResponse response;
-            response = await _customerApplication.GetByid(request);
-
-
-            return new ObjectResult(response) { StatusCode = response.StatusCode.GetHashCode() };
+            return StatusCode(HttpStatusCode.OK.GetHashCode(), response);
         }
 
         // PUT api/<ClienteController>/5
         [HttpPut("{id}")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Put(Guid id, [FromBody] CustomerUpdateRequest request)
+        public async Task<IActionResult> Put(CustomerUpdateRequest request)
         {
+            var response = await _mediator.Send(request);
 
-            var _validator = await _validatorCustomerUpdateRequestValidator.ValidateAsync(request);
-
-            if (!_validator.IsValid)
-            {
-                var validador = Extensions.Fluentvalidation.FluentValidation.Errors(_validator.Errors).Result;
-                return new ObjectResult(validador) { StatusCode = validador.StatusCode.GetHashCode() };
-            }
-
-            var response = await _customerApplication.Update(id, request);
-
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                return new ObjectResult(response) { StatusCode = response.StatusCode.GetHashCode() };
-            }
-
-            return StatusCode(response.StatusCode.GetHashCode());
+            return StatusCode(response.StatusCode.GetHashCode(), response.Content);
         }
 
         // DELETE api/<ClienteController>/5
@@ -120,24 +66,9 @@ namespace ClubeAss.API.Customer.Controllers.V1
         [MapToApiVersion("1.0")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var request = new CustomerDeleteRequest(id);
-            var _validator = await _validatorCustomerDeleteRequestValidator.ValidateAsync(request);
+            var response = await _mediator.Send(new CustomerDeleteRequest(id));
 
-            if (!_validator.IsValid)
-            {
-                var validador = Extensions.Fluentvalidation.FluentValidation.Errors(_validator.Errors).Result;
-                return new ObjectResult(validador) { StatusCode = validador.StatusCode.GetHashCode() };
-            }
-
-            var response = await _customerApplication.Delete(new CustomerDeleteRequest(id));
-
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                return new ObjectResult(response) { StatusCode = response.StatusCode.GetHashCode() };
-            }
-           
-            return StatusCode(response.StatusCode.GetHashCode());
+            return StatusCode(response.StatusCode.GetHashCode(), response.Content);
         }
-
     }
 }
