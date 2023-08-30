@@ -15,6 +15,6 @@ namespace ClubeAss.Domain.Interface.Application
 
         Task<BaseResponse> Update(Guid id, CustomerUpdateRequest customer);
 
-        Task<BaseResponse> Remove(CustomerDeleteRequest id);
+        Task<BaseResponse> Delete(CustomerDeleteRequest id);
     }
 }

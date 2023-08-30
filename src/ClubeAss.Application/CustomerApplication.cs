@@ -26,7 +26,7 @@ namespace ClubeAss.Application
 
             var customer = _mapper.Map<CustomerAddRequest, Customer>(request);
 
-            _clienteRepositorio.Add(customer);
+            _clienteRepositorio.AddAsync(customer);
 
             return Task.FromResult(new BaseResponse(System.Net.HttpStatusCode.OK));
 
@@ -34,29 +34,29 @@ namespace ClubeAss.Application
 
         public Task<BaseResponse> GetAll()
         {
-            var customers = _clienteRepositorio.GetAll().Result;
+            var customers = _clienteRepositorio.GetAllAsync().Result;
 
             return Task.FromResult(new BaseResponse(System.Net.HttpStatusCode.OK, _mapper.Map<IEnumerable<CustomerResponse>>(customers)));
         }
 
         public Task<BaseResponse> GetByid(CustomerGetRequest request)
         {
-            var customers = _clienteRepositorio.GetById(request.Id).Result;
+            var customers = _clienteRepositorio.GetByIdAsync(request.Id).Result;
 
             return Task.FromResult(new BaseResponse(System.Net.HttpStatusCode.OK, _mapper.Map<CustomerResponse>(customers)));
         }
 
-        public Task<BaseResponse> Remove(CustomerDeleteRequest request)
+        public Task<BaseResponse> Delete(CustomerDeleteRequest request)
         {
 
-            var item = _clienteRepositorio.GetById(request.Id).Result;
+            var item = _clienteRepositorio.GetByIdAsync(request.Id).Result;
 
             if (item == null)
             {
                 return Task.FromResult(new BaseResponse(System.Net.HttpStatusCode.BadRequest, null, new List<string>() { "Id não encontrado" }));
             }
 
-            _clienteRepositorio.Remove(item);
+            _clienteRepositorio.DeleteAsync(item);
 
             return Task.FromResult(new BaseResponse(System.Net.HttpStatusCode.OK));
         }
@@ -67,7 +67,7 @@ namespace ClubeAss.Application
             var customer = _mapper.Map<CustomerUpdateRequest, Customer>(request);
             customer.Id = id;
 
-            var item = _clienteRepositorio.GetById(customer.Id).Result;
+            var item = _clienteRepositorio.GetByIdAsync(customer.Id).Result;
 
             if (item == null)
             {
@@ -76,7 +76,7 @@ namespace ClubeAss.Application
 
             item.Nome = customer.Nome;
 
-            _clienteRepositorio.Update(item);
+            _clienteRepositorio.UpdateAsync(item);
 
 
             return Task.FromResult(new BaseResponse(System.Net.HttpStatusCode.OK));

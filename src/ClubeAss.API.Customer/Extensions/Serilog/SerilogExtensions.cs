@@ -22,8 +22,8 @@ namespace ClubeAss.API.Customer.Base
                 .Enrich.WithEnvironmentUserName()
                 .Enrich.WithEnvironmentName()
                 .Enrich.WithMachineName()
-                .Filter.ByExcluding(Matching.FromSource("Microsoft.AspNetCore.StaticFiles"))               
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")                
+                .Filter.ByExcluding(Matching.FromSource("Microsoft.AspNetCore.StaticFiles"))
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
                 .CreateLogger();
         }
     }

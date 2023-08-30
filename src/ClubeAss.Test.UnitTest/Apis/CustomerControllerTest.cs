@@ -133,7 +133,7 @@ namespace ClubeAss.Test.UnitTest.Apis
         [Fact]
         public void RemoveSucesso()
         {
-            customerApplicationMoq.Setup(x => x.Remove(It.IsAny<CustomerDeleteRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, null));
+            customerApplicationMoq.Setup(x => x.Delete(It.IsAny<CustomerDeleteRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, null));
 
             validatorCustomerDeleteRequestValidatorMoq.Setup(x => x.ValidateAsync(It.IsAny<CustomerDeleteRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ValidationResult());
 
@@ -158,7 +158,7 @@ namespace ClubeAss.Test.UnitTest.Apis
         [Fact]
         public void RemoveBadRequestNotExist()
         {
-            customerApplicationMoq.Setup(x => x.Remove(It.IsAny<CustomerDeleteRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.BadRequest, null, new List<string>() { "Erro" }));
+            customerApplicationMoq.Setup(x => x.Delete(It.IsAny<CustomerDeleteRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.BadRequest, null, new List<string>() { "Erro" }));
 
             validatorCustomerDeleteRequestValidatorMoq.Setup(x => x.ValidateAsync(It.IsAny<CustomerDeleteRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ValidationResult());
 

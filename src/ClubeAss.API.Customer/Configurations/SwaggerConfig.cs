@@ -15,7 +15,7 @@ namespace ClubeAss.API.Customer.Configurations
     {
         public static IServiceCollection AddServiceSwaggerConfig(this IServiceCollection services, IConfiguration configuration)
         {
-                        
+
             // Configurando o serviço de documentação do Swagger
             services.AddSwaggerGen(c =>
             {
@@ -52,6 +52,7 @@ namespace ClubeAss.API.Customer.Configurations
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
 
+#if DEBUG
             app.UseSwagger();
 
             var apiVersionDescriptionProvider = app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>();
@@ -65,7 +66,7 @@ namespace ClubeAss.API.Customer.Configurations
                         description.GroupName.ToUpperInvariant());
                 }
             });
-
+#endif
             return app;
         }
     }

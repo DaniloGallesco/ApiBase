@@ -8,10 +8,10 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace ClubeAss.API.Customer.Controllers.V1
+namespace ClubeAss.API.Customer.Controllers.V2
 {
     [ApiController]
-    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [Route("API/v{version:apiVersion}/Customer")]
     public class CustomerController : ControllerBase
     {
@@ -42,18 +42,26 @@ namespace ClubeAss.API.Customer.Controllers.V1
 
         // GET: api/<ClienteController>
         [HttpGet]
-        [MapToApiVersion("1.0")]
+        [MapToApiVersion("2.0")]
         public async Task<IActionResult> List()
         {
             BaseResponse response;
 
-            response = await _customerApplication.GetAll();
+            if (!_cache.TryGetValue("Customer.List", out response))
+            {
+                var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(999));
+
+                response = await _customerApplication.GetAll();
+
+                _cache.Set("Customer.List", response, cacheEntryOptions);
+            }
+
             return new ObjectResult(response) { StatusCode = response.StatusCode.GetHashCode() };
         }
 
         // POST api/<ClienteController>
         [HttpPost]
-        [MapToApiVersion("1.0")]
+        [MapToApiVersion("2.0")]
         public async Task<IActionResult> Post([FromBody] CustomerAddRequest cliente)
         {
             var _validator = await _validatorCustomerAddRequest.ValidateAsync(cliente);
@@ -66,12 +74,14 @@ namespace ClubeAss.API.Customer.Controllers.V1
 
             var response = await _customerApplication.Add(cliente);
 
+            _cache.Remove("Customer.List");
+
             return StatusCode(response.StatusCode.GetHashCode());
         }
 
         // GET api/<ClienteController>/5
         [HttpGet("{id}")]
-        [MapToApiVersion("1.0")]
+        [MapToApiVersion("2.0")]
         public async Task<IActionResult> Get(Guid id)
         {
 
@@ -85,7 +95,15 @@ namespace ClubeAss.API.Customer.Controllers.V1
             }
 
             BaseResponse response;
-            response = await _customerApplication.GetByid(request);
+            if (!_cache.TryGetValue("Customer.Get." + id.ToString(), out response))
+            {
+                var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(999));
+
+
+                response = await _customerApplication.GetByid(request);
+
+                _cache.Set("Customer.Get." + id.ToString(), response, cacheEntryOptions);
+            }
 
 
             return new ObjectResult(response) { StatusCode = response.StatusCode.GetHashCode() };
@@ -93,7 +111,7 @@ namespace ClubeAss.API.Customer.Controllers.V1
 
         // PUT api/<ClienteController>/5
         [HttpPut("{id}")]
-        [MapToApiVersion("1.0")]
+        [MapToApiVersion("2.0")]
         public async Task<IActionResult> Put(Guid id, [FromBody] CustomerUpdateRequest request)
         {
 
@@ -111,13 +129,14 @@ namespace ClubeAss.API.Customer.Controllers.V1
             {
                 return new ObjectResult(response) { StatusCode = response.StatusCode.GetHashCode() };
             }
-
+            _cache.Remove("Customer.List");
+            _cache.Remove("Customer.Get." + id.ToString());
             return StatusCode(response.StatusCode.GetHashCode());
         }
 
         // DELETE api/<ClienteController>/5
         [HttpDelete("{id}")]
-        [MapToApiVersion("1.0")]
+        [MapToApiVersion("2.0")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var request = new CustomerDeleteRequest(id);
@@ -135,7 +154,9 @@ namespace ClubeAss.API.Customer.Controllers.V1
             {
                 return new ObjectResult(response) { StatusCode = response.StatusCode.GetHashCode() };
             }
-           
+
+            _cache.Remove("Customer.List");
+            _cache.Remove("Customer.Get." + id.ToString());
             return StatusCode(response.StatusCode.GetHashCode());
         }
 

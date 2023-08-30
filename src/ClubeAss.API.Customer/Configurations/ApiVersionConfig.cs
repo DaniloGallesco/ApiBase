@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
@@ -8,7 +7,7 @@ namespace ClubeAss.API.Customer.Configurations
     [ExcludeFromCodeCoverage]
     public static class ApiVersionConfig
     {
-        public static IServiceCollection ApiVersionServiceConfig(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ApiVersionServiceConfig(this IServiceCollection services)
         {
             services.AddApiVersioning(opt =>
             {

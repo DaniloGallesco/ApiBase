@@ -35,7 +35,7 @@ namespace ClubeAss.API.Customer.Configurations
             // Gera o endpoint que retornará os dados utilizados no dashboard
             app.UseHealthChecks("/healthcheck", new HealthCheckOptions()
             {
-                Predicate = _ => true,
+                Predicate = _ => false,
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
 

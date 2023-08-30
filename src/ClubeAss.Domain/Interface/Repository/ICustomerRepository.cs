@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using ClubeAss.Domain.Interface.Repository.IBase;
 
 namespace ClubeAss.Domain.Interface.Repository
 {
-    public interface ICustomerRepository
+    public interface ICustomerRepository : IGenericRepository<Customer>
     {
-        Task<IEnumerable<Customer>> GetAll();
 
-        Task<Customer> GetById(Guid id);
-
-        void Add(Customer customer);
-
-        void Update(Customer customer);
-
-        void Remove(Customer customer);
     }
 }
