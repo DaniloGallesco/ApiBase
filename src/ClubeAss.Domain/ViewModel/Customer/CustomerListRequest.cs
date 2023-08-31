@@ -1,10 +1,8 @@
-﻿using ClubeAss.API.Customer.ViewModel.Customer;
-using MediatR;
-using System.Collections.Generic;
+﻿using MediatR;
 
 namespace ClubeAss.Domain.Commands
 {
-    public class CustomerListRequest : IRequest<IEnumerable<CustomerResponse>>
+    public class CustomerListRequest : IRequest<BaseResponse>
     {
     }
 }

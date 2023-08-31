@@ -3,33 +3,29 @@ using ClubeAss.API.Customer.ViewModel.Customer;
 using ClubeAss.Domain;
 using ClubeAss.Domain.Commands;
 using ClubeAss.Domain.Interface.Repository;
-using ClubeAss.Domain.Repository.IBase;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ClubeAss.Application.CommandHandlers
 {
     public class CustomerHandler : IRequestHandler<CustomerAddRequest, BaseResponse>,
-                                   IRequestHandler<CustomerListRequest, IEnumerable<CustomerResponse>>,
+                                   IRequestHandler<CustomerListRequest, BaseResponse>,
                                    IRequestHandler<CustomerGetRequest, BaseResponse>,
                                    IRequestHandler<CustomerDeleteRequest, BaseResponse>,
                                    IRequestHandler<CustomerUpdateRequest, BaseResponse>
-
-
     {
         private readonly ICustomerRepository _clienteRepositorio;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<CustomerHandler> _log;
         private readonly IMapper _mapper;
 
-        public CustomerHandler(ICustomerRepository clienteRepositorio, IUnitOfWork unitOfWork, IMapper mapper, ILogger<CustomerHandler> log)
+        public CustomerHandler(ICustomerRepository clienteRepositorio, IMapper mapper, ILogger<CustomerHandler> log)
         {
             _clienteRepositorio = clienteRepositorio;
-            _unitOfWork = unitOfWork;
             _mapper = mapper;
             _log = log;
         }
@@ -40,55 +36,83 @@ namespace ClubeAss.Application.CommandHandlers
             {
                 var customer = _mapper.Map<CustomerAddRequest, Customer>(request);
 
-                _unitOfWork.BeginTransaction();
-
                 await _clienteRepositorio.AddAsync(customer);
 
-                _unitOfWork.Commit();
-
-                return new BaseResponse(System.Net.HttpStatusCode.NoContent);
             }
             catch (Exception ex)
             {
-                _unitOfWork.Rollback();
                 _log.LogError(ex, "Error add customer");
-                return new BaseResponse(System.Net.HttpStatusCode.InternalServerError, "Ocorreu um erro inesperado, tente mais tarde!");
+                throw;
             }
+
+            return new BaseResponse(System.Net.HttpStatusCode.OK, null, new List<string>() { "Sucesso" });
+
         }
 
-        public async Task<IEnumerable<CustomerResponse>> Handle(CustomerListRequest request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(CustomerListRequest request, CancellationToken cancellationToken)
         {
-            var customers = await _clienteRepositorio.GetAllAsync();
+            try
+            {
+                var customers = await _clienteRepositorio.GetAllAsync();
 
-            return _mapper.Map<IEnumerable<CustomerResponse>>(customers);
+                if (!customers.Any())
+                {
+                    return new BaseResponse(System.Net.HttpStatusCode.NoContent, null, new List<string>() { "Registro não localizado" });
+                }
+
+                return new BaseResponse(System.Net.HttpStatusCode.OK, customers, new List<string>() { "Sucesso" });
+
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Error GetAllAsync customer");
+                throw;
+            }
         }
 
 
         public async Task<BaseResponse> Handle(CustomerGetRequest request, CancellationToken cancellationToken)
         {
-            var customers = await _clienteRepositorio.GetByIdAsync(request.Id);
+            try
+            {
+                var customer = await _clienteRepositorio.GetByIdAsync(request.Id);
 
-            return _mapper.Map<BaseResponse>(customers);
+                if (customer == null)
+                {
+                    return new BaseResponse(System.Net.HttpStatusCode.BadRequest, null, new List<string>() { "Registro não localizado" });
+                }
+
+                return new BaseResponse(System.Net.HttpStatusCode.OK, customer, new List<string>() { "Sucesso" });
+  }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Error GET customer");
+                throw;
+            }
         }
 
         public async Task<BaseResponse> Handle(CustomerDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                _unitOfWork.BeginTransaction();
-
                 var customers = await _clienteRepositorio.GetByIdAsync(request.Id);
+
+                if (customers == null)
+                {
+                    return new BaseResponse(System.Net.HttpStatusCode.BadRequest, null, new List<string>() { "Registro não localizado" });
+                }
+
                 await _clienteRepositorio.DeleteAsync(customers);
 
-                _unitOfWork.Commit();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                _unitOfWork.Rollback();
+                _log.LogError(ex, "Error Delete customer");
                 throw;
             }
 
-            return new BaseResponse(System.Net.HttpStatusCode.OK);
+            return new BaseResponse(System.Net.HttpStatusCode.OK, null, new List<string>() { "Sucesso" });
+
         }
 
         public async Task<BaseResponse> Handle(CustomerUpdateRequest request, CancellationToken cancellationToken)
@@ -96,20 +120,24 @@ namespace ClubeAss.Application.CommandHandlers
             try
             {
 
+                var customers = await _clienteRepositorio.GetByIdAsync(request.Id);
+
+                if (customers == null)
+                {
+                    return new BaseResponse(System.Net.HttpStatusCode.BadRequest, null, new List<string>() { "Registro não localizado" });
+                }
+
                 var customer = _mapper.Map<CustomerUpdateRequest, Customer>(request);
 
-                _unitOfWork.BeginTransaction();
 
                 await _clienteRepositorio.UpdateAsync(customer);
 
-                _unitOfWork.Commit();
 
-                return new BaseResponse(System.Net.HttpStatusCode.OK);
+                return new BaseResponse(System.Net.HttpStatusCode.OK, null, new List<string>() { "Sucesso" });
             }
             catch (Exception ex)
             {
-                _unitOfWork.Rollback();
-                _log.LogError(ex, "Error Alter customer");
+                _log.LogError(ex, "Error Update customer");
                 throw;
             }
         }

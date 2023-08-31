@@ -1,9 +1,9 @@
-﻿using ClubeAss.Domain.Behaviors;
+﻿using ClubeAss.Application.CommandHandlers;
+using ClubeAss.Domain.Behaviors;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using Velinho_API;
 
 namespace ClubeAss.API.Customer.Configurations
 {
@@ -21,7 +21,10 @@ namespace ClubeAss.API.Customer.Configurations
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+                                typeof(Startup).Assembly,
+                                typeof(CustomerHandler).Assembly
+            ));
         }
 
     }

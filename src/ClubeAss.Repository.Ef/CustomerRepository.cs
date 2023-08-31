@@ -10,8 +10,12 @@ namespace ClubeAss.Repository.Ef
     {
 
         private readonly DbSet<Customer> _customer;
+        protected readonly BaseContext Db;
+
+
         public CustomerRepository(BaseContext dbContext) : base(dbContext)
         {
+            Db = dbContext;
             _customer = dbContext.Set<Customer>();
         }
     }

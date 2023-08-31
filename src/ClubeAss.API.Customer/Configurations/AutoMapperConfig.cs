@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 namespace ClubeAss.API.Customer.Configurations
 {
@@ -16,9 +18,7 @@ namespace ClubeAss.API.Customer.Configurations
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<CustomerResponse, Domain.Customer>();
-                cfg.CreateMap<Domain.Customer, CustomerResponse>();
-
+               
                 cfg.CreateMap<CustomerAddRequest, Domain.Customer>();
                 cfg.CreateMap<Domain.Customer, CustomerAddRequest>();
 
@@ -27,8 +27,11 @@ namespace ClubeAss.API.Customer.Configurations
 
 
                 cfg.CreateMap<Domain.Customer, BaseResponse>()
-                .ForMember(dst => dst.Content,
-                    map => map.MapFrom(src => src));
+                .ConstructUsing(x => new BaseResponse(HttpStatusCode.OK, x, null));
+
+                cfg.CreateMap<IReadOnlyList<Domain.Customer>, BaseResponse>()
+                .ConstructUsing(x => new BaseResponse(HttpStatusCode.OK, x, null));
+
 
             });
 

@@ -1,9 +1,10 @@
 ﻿using ClubeAss.Domain.Commands;
 using MediatR;
+using System;
 
 namespace ClubeAss.API.Customer.ViewModel.Customer
 {
-    public class CustomerUpdateRequest : IRequest<BaseResponse>
+    public class CustomerUpdateRequestViewModel
     {
         public string Nome { get; set; }
     }

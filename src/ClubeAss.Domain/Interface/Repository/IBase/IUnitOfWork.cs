@@ -1,14 +1,14 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 
 namespace ClubeAss.Domain.Repository.IBase
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
 
         void BeginTransaction();
 
-        void Commit();
+        Task<bool> Commit();
 
-        void Rollback();
+        Task<bool> Rollback();
     }
 }

@@ -2,7 +2,6 @@
 using ClubeAss.Domain.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -28,17 +27,17 @@ namespace ClubeAss.API.Customer.Controllers.V1
         {
             var response = await _mediator.Send(new CustomerListRequest());
 
-            return StatusCode(HttpStatusCode.OK.GetHashCode(), response);
+            return StatusCode(response.StatusCode.GetHashCode(), response);
         }
 
         // POST api/<ClienteController>
         [HttpPost]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Post(CustomerAddRequest cliente)
+        public async Task<IActionResult> Post([FromBody] CustomerAddRequest cliente)
         {
             var response = await _mediator.Send(cliente);
 
-            return StatusCode(response.StatusCode.GetHashCode(), response.Content);
+            return StatusCode(response.StatusCode.GetHashCode(), response);
         }
 
         // GET api/<ClienteController>/5
@@ -48,17 +47,18 @@ namespace ClubeAss.API.Customer.Controllers.V1
         {
             var response = await _mediator.Send(new CustomerGetRequest(id));
 
-            return StatusCode(HttpStatusCode.OK.GetHashCode(), response);
+            return StatusCode(response.StatusCode.GetHashCode(), response);
         }
 
         // PUT api/<ClienteController>/5
         [HttpPut("{id}")]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> Put(CustomerUpdateRequest request)
+        public async Task<IActionResult> Put(Guid id, [FromBody] CustomerUpdateRequestViewModel request)
         {
-            var response = await _mediator.Send(request);
 
-            return StatusCode(response.StatusCode.GetHashCode(), response.Content);
+            var response = await _mediator.Send(new CustomerUpdateRequest() { Id = id, Nome = request.Nome});
+
+            return StatusCode(response.StatusCode.GetHashCode(), response);
         }
 
         // DELETE api/<ClienteController>/5
@@ -68,7 +68,7 @@ namespace ClubeAss.API.Customer.Controllers.V1
         {
             var response = await _mediator.Send(new CustomerDeleteRequest(id));
 
-            return StatusCode(response.StatusCode.GetHashCode(), response.Content);
+            return StatusCode(response.StatusCode.GetHashCode(), response);
         }
     }
 }

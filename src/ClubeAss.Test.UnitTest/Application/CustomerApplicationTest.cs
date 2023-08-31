@@ -39,10 +39,10 @@ namespace ClubeAss.Test.UnitTest.Application
 
             CustomerRepositoryMoq.Setup(x => x.AddAsync(It.IsAny<Customer>()));
 
-            var result = new CustomerHandler(CustomerRepositoryMoq.Object, _IUnitOfWork.Object, imapperMoq.Object, _log.Object)
+            var result = new CustomerHandler(CustomerRepositoryMoq.Object, imapperMoq.Object, _log.Object)
                  .Handle(new CustomerAddRequest() { Nome = guid.ToString() }, new System.Threading.CancellationToken()).Result;
 
-            Assert.True(result.StatusCode == System.Net.HttpStatusCode.NoContent);
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK);
         }
 
         [Fact]
@@ -52,10 +52,14 @@ namespace ClubeAss.Test.UnitTest.Application
             imapperMoq.Setup(x => x.Map<CustomerUpdateRequest, Customer>(It.IsAny<CustomerUpdateRequest>()))
                            .Returns(new Customer() { Nome = "Nome_" + guid.ToString(), Id = guid });
 
+            CustomerRepositoryMoq.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+                           .ReturnsAsync(new Customer() { Nome = "Nome_" + guid.ToString(), Id = guid });
+
+
 
             CustomerRepositoryMoq.Setup(x => x.UpdateAsync(It.IsAny<Customer>()));
 
-            var result = new CustomerHandler(CustomerRepositoryMoq.Object, _IUnitOfWork.Object, imapperMoq.Object, _log.Object)
+            var result = new CustomerHandler(CustomerRepositoryMoq.Object, imapperMoq.Object, _log.Object)
                  .Handle(new CustomerUpdateRequest() { Nome = guid.ToString() }, new System.Threading.CancellationToken()).Result;
 
             Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK);
@@ -72,10 +76,10 @@ namespace ClubeAss.Test.UnitTest.Application
 
             CustomerRepositoryMoq.Setup(x => x.UpdateAsync(It.IsAny<Customer>()));
 
-            var result = new CustomerHandler(CustomerRepositoryMoq.Object, _IUnitOfWork.Object, imapperMoq.Object, _log.Object)
+            var result = new CustomerHandler(CustomerRepositoryMoq.Object, imapperMoq.Object, _log.Object)
                  .Handle(new CustomerUpdateRequest() { Nome = guid.ToString() }, new System.Threading.CancellationToken()).Result;
 
-            Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK);
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest);
         }
 
         [Fact]
@@ -84,28 +88,28 @@ namespace ClubeAss.Test.UnitTest.Application
             var guid = Guid.NewGuid();
             CustomerRepositoryMoq.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((Customer)null);
 
-            var result = new CustomerHandler(CustomerRepositoryMoq.Object, _IUnitOfWork.Object, imapperMoq.Object, _log.Object)
+            var result = new CustomerHandler(CustomerRepositoryMoq.Object, imapperMoq.Object, _log.Object)
                 .Handle(new CustomerGetRequest(guid), new System.Threading.CancellationToken()).Result;
 
 
-            Assert.Null(result);
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest);
         }
 
         [Fact]
         public void GetAllNotExist()
         {
             var guid = Guid.NewGuid();
-            CustomerRepositoryMoq.Setup(x => x.GetAllAsync()).ReturnsAsync((List<Customer>)null);
+            CustomerRepositoryMoq.Setup(x => x.GetAllAsync()).ReturnsAsync( new List<Customer>());
 
-            imapperMoq.Setup(x => x.Map<IEnumerable<CustomerResponse>>(It.IsAny<IEnumerable<Customer>>()))
-                          .Returns((IEnumerable<CustomerResponse>)null);
+            imapperMoq.Setup(x => x.Map<BaseResponse> (It.IsAny<IEnumerable<Customer>>()))
+                          .Returns(new BaseResponse(System.Net.HttpStatusCode.OK) { });
 
 
-            var result = new CustomerHandler(CustomerRepositoryMoq.Object, _IUnitOfWork.Object, imapperMoq.Object, _log.Object)
+            var result = new CustomerHandler(CustomerRepositoryMoq.Object, imapperMoq.Object, _log.Object)
              .Handle(new CustomerListRequest(), new System.Threading.CancellationToken()).Result;
 
 
-            Assert.Null(result);
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.NoContent);
         }
 
         [Fact]
@@ -114,10 +118,10 @@ namespace ClubeAss.Test.UnitTest.Application
             var guid = Guid.NewGuid();
             CustomerRepositoryMoq.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<Customer>() { new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() } });
 
-            imapperMoq.Setup(x => x.Map<IEnumerable<CustomerResponse>>(It.IsAny<IEnumerable<Customer>>()))
-                          .Returns(new List<CustomerResponse>() { new CustomerResponse() { Id = guid, Nome = "Nome_" + guid.ToString() } });
+            imapperMoq.Setup(x => x.Map<BaseResponse>(It.IsAny<IEnumerable<Customer>>()))
+                          .Returns(new BaseResponse(System.Net.HttpStatusCode.OK) { });
 
-            var result = new CustomerHandler(CustomerRepositoryMoq.Object, _IUnitOfWork.Object, imapperMoq.Object, _log.Object)
+            var result = new CustomerHandler(CustomerRepositoryMoq.Object, imapperMoq.Object, _log.Object)
             .Handle(new CustomerListRequest(), new System.Threading.CancellationToken()).Result;
 
             Assert.NotNull(result);
@@ -131,7 +135,7 @@ namespace ClubeAss.Test.UnitTest.Application
 
             CustomerRepositoryMoq.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(new Customer() { Id = guid, Nome = "NOme" + guid.ToString() });
 
-            var result = new CustomerHandler(CustomerRepositoryMoq.Object, _IUnitOfWork.Object, imapperMoq.Object, _log.Object)
+            var result = new CustomerHandler(CustomerRepositoryMoq.Object, imapperMoq.Object, _log.Object)
             .Handle(new CustomerDeleteRequest(guid), new System.Threading.CancellationToken()).Result;
 
             Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK);
@@ -146,10 +150,10 @@ namespace ClubeAss.Test.UnitTest.Application
             CustomerRepositoryMoq.Setup(x => x.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((Customer)null);
 
 
-            var result = new CustomerHandler(CustomerRepositoryMoq.Object, _IUnitOfWork.Object, imapperMoq.Object, _log.Object)
-           .Handle(new CustomerListRequest(), new System.Threading.CancellationToken()).Result;
+            var result = new CustomerHandler(CustomerRepositoryMoq.Object, imapperMoq.Object, _log.Object)
+           .Handle(new CustomerDeleteRequest(guid), new System.Threading.CancellationToken()).Result;
 
-            Assert.NotNull(result);
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest);
         }
     }
 }

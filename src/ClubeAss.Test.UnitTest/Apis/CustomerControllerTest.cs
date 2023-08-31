@@ -1,17 +1,13 @@
 ﻿using ClubeAss.API.Customer.Controllers.V1;
 using ClubeAss.API.Customer.ViewModel.Customer;
 using ClubeAss.Domain.Commands;
-using ClubeAss.Domain.Interface.Application;
-using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using System.Collections.Generic;
-using System;
-using Xunit;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using System;
+using System.Collections.Generic;
 using System.Threading;
+using Xunit;
 
 namespace ClubeAss.Test.UnitTest.Apis
 {
@@ -33,7 +29,7 @@ namespace ClubeAss.Test.UnitTest.Apis
 
             _mediator
                 .Setup(m => m.Send(It.IsAny<CustomerListRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new List<CustomerResponse>() { new CustomerResponse() { Id = guid, Nome = "Nome_" + guid.ToString() } });
+                .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK) { Content = new { Id = guid, Nome = "Nome_" + guid.ToString() } });
 
             var result = new CustomerController(_mediator.Object).List().Result as ObjectResult;
 
@@ -45,15 +41,16 @@ namespace ClubeAss.Test.UnitTest.Apis
         [Fact]
         public void GetAllNotExist()
         {
-           
+
             _mediator
                 .Setup(m => m.Send(It.IsAny<CustomerListRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((List<CustomerResponse>)null);
+                .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.NoContent) { Content = null });
 
             var result = new CustomerController(_mediator.Object).List().Result as ObjectResult;
 
-            Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
-            Assert.Null(result.Value);
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.NoContent.GetHashCode());
+            Assert.Null(((BaseResponse)result.Value).Content);
+
         }
 
         [Fact]
@@ -66,7 +63,7 @@ namespace ClubeAss.Test.UnitTest.Apis
             var result = new CustomerController(_mediator.Object).Post(new CustomerAddRequest()).Result as ObjectResult;
 
             Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
-            Assert.Null(result.Value);
+            Assert.Null(((BaseResponse)result.Value).Content);
         }
 
         [Fact]
@@ -79,7 +76,7 @@ namespace ClubeAss.Test.UnitTest.Apis
             var result = new CustomerController(_mediator.Object).Post(new CustomerAddRequest()).Result as ObjectResult;
 
             Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest.GetHashCode());
-            Assert.Null(result.Value);
+            Assert.Null(((BaseResponse)result.Value).Content);
         }
 
         [Fact]
@@ -89,10 +86,11 @@ namespace ClubeAss.Test.UnitTest.Apis
             .Setup(m => m.Send(It.IsAny<CustomerUpdateRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, null));
 
-            var result = new CustomerController(_mediator.Object).Put(new CustomerUpdateRequest()).Result as ObjectResult;
+            var result = new CustomerController(_mediator.Object).Put(Guid.NewGuid(), new CustomerUpdateRequestViewModel()).Result as ObjectResult;
 
             Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
-            Assert.Null(result.Value);
+            Assert.Null(((BaseResponse)result.Value).Content);
+
         }
 
         [Fact]
@@ -102,11 +100,12 @@ namespace ClubeAss.Test.UnitTest.Apis
               .Setup(m => m.Send(It.IsAny<CustomerUpdateRequest>(), It.IsAny<CancellationToken>()))
               .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.BadRequest, null));
 
-            var result = new CustomerController(_mediator.Object).Put(new CustomerUpdateRequest()).Result as ObjectResult;
+            var result = new CustomerController(_mediator.Object).Put(Guid.NewGuid(),new CustomerUpdateRequestViewModel()).Result as ObjectResult;
 
 
             Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest.GetHashCode());
-            Assert.Null(result.Value);
+            Assert.Null(((BaseResponse)result.Value).Content);
+
         }
 
 
@@ -174,7 +173,7 @@ namespace ClubeAss.Test.UnitTest.Apis
 
             _mediator
                .Setup(m => m.Send(It.IsAny<CustomerGetRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, new CustomerResponse() { Id = guid, Nome = "Nome_" + guid.ToString() })  );
+                .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, new BaseResponse(System.Net.HttpStatusCode.OK) { Content = new { Id = guid, Nome = "Nome_" + guid.ToString() } }));
 
             var result = new CustomerController(_mediator.Object).Get(guid).Result as ObjectResult;
 
@@ -194,7 +193,7 @@ namespace ClubeAss.Test.UnitTest.Apis
 
             var result = new CustomerController(_mediator.Object).Get(guid).Result as ObjectResult;
 
-            Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest.GetHashCode());
             Assert.Null(((BaseResponse)result.Value).Content);
         }
 

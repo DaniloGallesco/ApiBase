@@ -10,6 +10,7 @@ namespace ClubeAss.Repository.Ef.Base
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly BaseContext _dbContext;
+
         public GenericRepository(BaseContext dbContext)
         {
             _dbContext = dbContext;

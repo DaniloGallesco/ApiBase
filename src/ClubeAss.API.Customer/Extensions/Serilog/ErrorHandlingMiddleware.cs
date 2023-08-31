@@ -40,7 +40,12 @@ namespace ClubeAss.API.Customer.Base
                 WriteIndented = true,
             };
 
+#if DEBUG
             var result = JsonSerializer.Serialize(new BaseResponse(HttpStatusCode.InternalServerError, null, new List<string> { exception.Message }), options);
+#else
+            var result = JsonSerializer.Serialize(new BaseResponse(HttpStatusCode.InternalServerError, null, new List<string> {  "Ocorreu um erro inesperado, tente mais tarde!" }), options);
+#endif
+
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = HttpStatusCode.InternalServerError.GetHashCode();

@@ -10,7 +10,6 @@ namespace ClubeAss.Repository.Ef.Context
     [ExcludeFromCodeCoverage]
     public class BaseContext : DbContext
     {
-
         public BaseContext(DbContextOptions<BaseContext> options) : base(options)
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
