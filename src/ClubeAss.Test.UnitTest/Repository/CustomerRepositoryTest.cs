@@ -1,4 +1,10 @@
-﻿using ClubeAss.Repository.Ef;
+﻿using ClubeAss.Domain;
+using ClubeAss.Repository.Ef;
+using ClubeAss.Repository.Ef.Context;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using Xunit;
 
 namespace ClubeAss.Test.UnitTest.Repository
 {
@@ -6,106 +12,106 @@ namespace ClubeAss.Test.UnitTest.Repository
     {
         private CustomerRepository CustomerRepositoryMoq;
 
-        //public CustomerRepositoryTest()
-        //{
-        //    var dbName = $"ApiBase_{DateTime.Now.ToFileTimeUtc()}";
+        public CustomerRepositoryTest()
+        {
+            var dbName = $"ApiBase_{DateTime.Now.ToFileTimeUtc()}";
 
-        //    DbContextOptions<BaseContext> DbContextOptionsMoq = new DbContextOptionsBuilder<BaseContext>()
-        //     .UseInMemoryDatabase(dbName)
-        //     .Options;
+            DbContextOptions<BaseContext> DbContextOptionsMoq = new DbContextOptionsBuilder<BaseContext>()
+             .UseInMemoryDatabase(dbName)
+             .Options;
 
-        //    CustomerRepositoryMoq = new CustomerRepository(new BaseContext(DbContextOptionsMoq));
-        //}
+            CustomerRepositoryMoq = new CustomerRepository(new BaseContext(DbContextOptionsMoq));
+        }
 
 
-        //[Fact]
-        //public void AddSucesso()
-        //{
+        [Fact]
+        public async void AddSucesso()
+        {
 
-        //    Guid guid = Guid.NewGuid();
-        //    var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
+            Guid guid = Guid.NewGuid();
+            var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
 
-        //    CustomerRepositoryMoq.Add(obj);
+            await CustomerRepositoryMoq.AddAsync(obj);
 
-        //    var validar = CustomerRepositoryMoq.GetById(guid).Result;
+            var validar = CustomerRepositoryMoq.GetByIdAsync(guid).Result;
 
-        //    Assert.True(validar.Id == guid && validar.Nome == "Nome_" + guid.ToString());
-        //}
+            Assert.True(validar.Id == guid && validar.Nome == "Nome_" + guid.ToString());
+        }
 
-        //[Fact]
-        //public void UpdateSucesso()
-        //{
+        [Fact]
+        public async void UpdateSucesso()
+        {
 
-        //    Guid guid = Guid.NewGuid();
-        //    var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
+            Guid guid = Guid.NewGuid();
+            var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
 
-        //    CustomerRepositoryMoq.Add(obj);
-        //    obj.Nome = "Nome_v2" + guid.ToString();
+            await CustomerRepositoryMoq.AddAsync(obj);
+            obj.Nome = "Nome_v2" + guid.ToString();
 
-        //    CustomerRepositoryMoq.Update(obj);
+            await CustomerRepositoryMoq.UpdateAsync(obj);
 
-        //    var validar = CustomerRepositoryMoq.GetById(guid).Result;
+            var validar = CustomerRepositoryMoq.GetByIdAsync(guid).Result;
 
-        //    Assert.True(validar.Id == guid && validar.Nome == "Nome_v2" + guid.ToString());
-        //}
+            Assert.True(validar.Id == guid && validar.Nome == "Nome_v2" + guid.ToString());
+        }
 
-        //[Fact]
-        //public void UpdateNotExist()
-        //{
-        //    Guid guid = Guid.NewGuid();
-        //    var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
+        [Fact]
+        public async void UpdateNotExist()
+        {
+            Guid guid = Guid.NewGuid();
+            var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
 
-        //    Assert.Throws<DbUpdateConcurrencyException>(() => CustomerRepositoryMoq.Update(obj));
-        //}
+            await Assert.ThrowsAsync<DbUpdateConcurrencyException>(async () => await CustomerRepositoryMoq.UpdateAsync(obj));
+        }
 
-        //[Fact]
-        //public void GetByIdNotExist()
-        //{
-        //    var result = CustomerRepositoryMoq.GetById(Guid.NewGuid()).Result;
+        [Fact]
+        public void GetByIdNotExist()
+        {
+            var result = CustomerRepositoryMoq.GetByIdAsync(Guid.NewGuid()).Result;
 
-        //    Assert.Null(result);
-        //}
+            Assert.Null(result);
+        }
 
-        //[Fact]
-        //public void GetAllNotExist()
-        //{
-        //    var result = CustomerRepositoryMoq.GetAll().Result;
+        [Fact]
+        public async void GetAllNotExist()
+        {
+            var result = await CustomerRepositoryMoq.GetAllAsync();
 
-        //    Assert.False(result.Any());
-        //}
+            Assert.False(result.Any());
+        }
 
-        //[Fact]
-        //public void GetAllExist()
-        //{
-        //    Guid guid = Guid.NewGuid();
-        //    var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
+        [Fact]
+        public async void GetAllExist()
+        {
+            Guid guid = Guid.NewGuid();
+            var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
 
-        //    CustomerRepositoryMoq.Add(obj);
-        //    var result = CustomerRepositoryMoq.GetAll().Result;
+            await CustomerRepositoryMoq.AddAsync(obj);
+            var result = CustomerRepositoryMoq.GetAllAsync().Result;
 
-        //    Assert.True(result.Any() && result.Count() == 1);
-        //}
+            Assert.True(result.Any() && result.Count() == 1);
+        }
 
-        //[Fact]
-        //public void RemoveExist()
-        //{
-        //    Guid guid = Guid.NewGuid();
-        //    var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
+        [Fact]
+        public async void RemoveExist()
+        {
+            Guid guid = Guid.NewGuid();
+            var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
 
-        //    CustomerRepositoryMoq.Add(obj);
-        //    CustomerRepositoryMoq.Remove(obj);
-        //    var result = CustomerRepositoryMoq.GetById(guid).Result;
+            await CustomerRepositoryMoq.AddAsync(obj);
+            await CustomerRepositoryMoq.DeleteAsync(obj);
+            var result = CustomerRepositoryMoq.GetByIdAsync(guid).Result;
 
-        //    Assert.Null(result);
-        //}
+            Assert.Null(result);
+        }
 
-        //[Fact]
-        //public void RemoveNotExist()
-        //{
-        //    Guid guid = Guid.NewGuid();
-        //    var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
+        [Fact]
+        public async void RemoveNotExist()
+        {
+            Guid guid = Guid.NewGuid();
+            var obj = new Customer() { Id = guid, Nome = "Nome_" + guid.ToString() };
 
-        //    Assert.Throws<DbUpdateConcurrencyException>(() => CustomerRepositoryMoq.Remove(obj));
-        //}
+            await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => CustomerRepositoryMoq.DeleteAsync(obj));
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace ClubeAss.Application.CommandHandlers
 {
     public class CustomerHandler : IRequestHandler<CustomerAddRequest, BaseResponse>,
                                    IRequestHandler<CustomerListRequest, IEnumerable<CustomerResponse>>,
-                                   IRequestHandler<CustomerGetRequest, CustomerResponse>,
+                                   IRequestHandler<CustomerGetRequest, BaseResponse>,
                                    IRequestHandler<CustomerDeleteRequest, BaseResponse>,
                                    IRequestHandler<CustomerUpdateRequest, BaseResponse>
 
@@ -64,11 +64,11 @@ namespace ClubeAss.Application.CommandHandlers
         }
 
 
-        public async Task<CustomerResponse> Handle(CustomerGetRequest request, CancellationToken cancellationToken)
+        public async Task<BaseResponse> Handle(CustomerGetRequest request, CancellationToken cancellationToken)
         {
             var customers = await _clienteRepositorio.GetByIdAsync(request.Id);
 
-            return _mapper.Map<CustomerResponse>(customers);
+            return _mapper.Map<BaseResponse>(customers);
         }
 
         public async Task<BaseResponse> Handle(CustomerDeleteRequest request, CancellationToken cancellationToken)

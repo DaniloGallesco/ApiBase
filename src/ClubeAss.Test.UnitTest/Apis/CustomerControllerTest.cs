@@ -1,101 +1,113 @@
-﻿namespace ClubeAss.Test.UnitTest.Apis
+﻿using ClubeAss.API.Customer.Controllers.V1;
+using ClubeAss.API.Customer.ViewModel.Customer;
+using ClubeAss.Domain.Commands;
+using ClubeAss.Domain.Interface.Application;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using System.Collections.Generic;
+using System;
+using Xunit;
+using MediatR;
+using System.Threading;
+
+namespace ClubeAss.Test.UnitTest.Apis
 {
     public class CustomerControllerTest
     {
 
-        //private Mock<ICustomerApplication> customerApplicationMoq;
-        //private Mock<IValidator<CustomerAddRequest>> validatorCustomerAddRequestMoq;
-        //private Mock<IValidator<CustomerDeleteRequest>> validatorCustomerDeleteRequestValidatorMoq;
-        //private Mock<IValidator<CustomerGetRequest>> validatorCustomerGetRequestValidatorMoq;
-        //private Mock<IValidator<CustomerUpdateRequest>> validatorCustomerUpdateRequestValidatorMoq;
-        //private IMemoryCache _cache;
+        private Mock<IMediator> _mediator;
 
-        //public CustomerControllerTest()
-        //{
-        //    customerApplicationMoq = new Mock<ICustomerApplication>();
-        //    validatorCustomerAddRequestMoq = new Mock<IValidator<CustomerAddRequest>>();
-        //    validatorCustomerDeleteRequestValidatorMoq = new Mock<IValidator<CustomerDeleteRequest>>();
-        //    validatorCustomerGetRequestValidatorMoq = new Mock<IValidator<CustomerGetRequest>>();
-        //    validatorCustomerUpdateRequestValidatorMoq = new Mock<IValidator<CustomerUpdateRequest>>();
-
-        //    var services = new ServiceCollection();
-        //    services.AddMemoryCache();
-        //    var serviceProvider = services.BuildServiceProvider();
-
-        //    _cache = serviceProvider.GetService<IMemoryCache>();
-        //}
+        public CustomerControllerTest()
+        {
+            _mediator = new Mock<IMediator>();
+        }
 
 
-        //[Fact]
-        //public void GetAlSucesso()
-        //{
-        //    customerApplicationMoq.Setup(x => x.GetAll()).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, new List<CustomerResponse>()));
+        [Fact]
+        public void GetAlSucesso()
+        {
+            var guid = Guid.NewGuid();
 
-        //    var result = new CustomerController(customerApplicationMoq.Object, validatorCustomerAddRequestMoq.Object, validatorCustomerDeleteRequestValidatorMoq.Object, validatorCustomerGetRequestValidatorMoq.Object, validatorCustomerUpdateRequestValidatorMoq.Object, _cache).List().Result as ObjectResult;
+            _mediator
+                .Setup(m => m.Send(It.IsAny<CustomerListRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<CustomerResponse>() { new CustomerResponse() { Id = guid, Nome = "Nome_" + guid.ToString() } });
 
-        //    Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
-        //    Assert.NotNull(((BaseResponse)result.Value).Content);
-        //}
+            var result = new CustomerController(_mediator.Object).List().Result as ObjectResult;
+
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
+            Assert.NotNull(result.Value);
+        }
 
 
-        //[Fact]
-        //public void GetAllNotExist()
-        //{
-        //    customerApplicationMoq.Setup(x => x.GetAll()).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, (List<CustomerResponse>)null));
+        [Fact]
+        public void GetAllNotExist()
+        {
+           
+            _mediator
+                .Setup(m => m.Send(It.IsAny<CustomerListRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((List<CustomerResponse>)null);
 
-        //    var result = new CustomerController(customerApplicationMoq.Object, validatorCustomerAddRequestMoq.Object, validatorCustomerDeleteRequestValidatorMoq.Object, validatorCustomerGetRequestValidatorMoq.Object, validatorCustomerUpdateRequestValidatorMoq.Object, _cache).List().Result as ObjectResult;
+            var result = new CustomerController(_mediator.Object).List().Result as ObjectResult;
 
-        //    Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
-        //    Assert.Null(((BaseResponse)result.Value).Content);
-        //}
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
+            Assert.Null(result.Value);
+        }
 
-        //[Fact]
-        //public void AddSucesso()
-        //{
-        //    customerApplicationMoq.Setup(x => x.Add(It.IsAny<CustomerAddRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, null));
+        [Fact]
+        public void AddSucesso()
+        {
+            _mediator
+             .Setup(m => m.Send(It.IsAny<CustomerAddRequest>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, null));
 
-        //    validatorCustomerAddRequestMoq.Setup(x => x.ValidateAsync(It.IsAny<CustomerAddRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ValidationResult());
+            var result = new CustomerController(_mediator.Object).Post(new CustomerAddRequest()).Result as ObjectResult;
 
-        //    var result = new CustomerController(customerApplicationMoq.Object, validatorCustomerAddRequestMoq.Object, validatorCustomerDeleteRequestValidatorMoq.Object, validatorCustomerGetRequestValidatorMoq.Object, validatorCustomerUpdateRequestValidatorMoq.Object, _cache).Post(null).Result as StatusCodeResult;
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
+            Assert.Null(result.Value);
+        }
 
-        //    Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
-        //}
+        [Fact]
+        public void AddBadRequest()
+        {
+            _mediator
+           .Setup(m => m.Send(It.IsAny<CustomerAddRequest>(), It.IsAny<CancellationToken>()))
+           .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.BadRequest, null));
 
-        //[Fact]
-        //public void AddBadRequest()
-        //{
-        //    validatorCustomerAddRequestMoq.Setup(x => x.ValidateAsync(It.IsAny<CustomerAddRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ValidationResult(new List<ValidationFailure>() { new ValidationFailure("Nome", "Erro qualquer") }));
+            var result = new CustomerController(_mediator.Object).Post(new CustomerAddRequest()).Result as ObjectResult;
 
-        //    var result = new CustomerController(customerApplicationMoq.Object, validatorCustomerAddRequestMoq.Object, validatorCustomerDeleteRequestValidatorMoq.Object, validatorCustomerGetRequestValidatorMoq.Object, validatorCustomerUpdateRequestValidatorMoq.Object, _cache).Post(null).Result as ObjectResult;
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest.GetHashCode());
+            Assert.Null(result.Value);
+        }
 
-        //    Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest.GetHashCode());
-        //    Assert.NotNull(((BaseResponse)result.Value).Message);
-        //}
+        [Fact]
+        public void UpdateSucesso()
+        {
+            _mediator
+            .Setup(m => m.Send(It.IsAny<CustomerUpdateRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, null));
 
-        //[Fact]
-        //public void UpdateSucesso()
-        //{
-        //    customerApplicationMoq.Setup(x => x.Update(It.IsAny<Guid>(), It.IsAny<CustomerUpdateRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, null));
+            var result = new CustomerController(_mediator.Object).Put(new CustomerUpdateRequest()).Result as ObjectResult;
 
-        //    validatorCustomerUpdateRequestValidatorMoq.Setup(x => x.ValidateAsync(It.IsAny<CustomerUpdateRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ValidationResult());
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
+            Assert.Null(result.Value);
+        }
 
-        //    var result = new CustomerController(customerApplicationMoq.Object, validatorCustomerAddRequestMoq.Object, validatorCustomerDeleteRequestValidatorMoq.Object, validatorCustomerGetRequestValidatorMoq.Object, validatorCustomerUpdateRequestValidatorMoq.Object, _cache)
-        //        .Put(Guid.NewGuid(), null).Result as StatusCodeResult;
+        [Fact]
+        public void UpadteBadRequestValidate()
+        {
+            _mediator
+              .Setup(m => m.Send(It.IsAny<CustomerUpdateRequest>(), It.IsAny<CancellationToken>()))
+              .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.BadRequest, null));
 
-        //    Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
-        //}
+            var result = new CustomerController(_mediator.Object).Put(new CustomerUpdateRequest()).Result as ObjectResult;
 
-        //[Fact]
-        //public void UpadteBadRequestValidate()
-        //{
-        //    validatorCustomerUpdateRequestValidatorMoq.Setup(x => x.ValidateAsync(It.IsAny<CustomerUpdateRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ValidationResult(new List<ValidationFailure>() { new ValidationFailure("Nome", "Erro qualquer") }));
 
-        //    var result = new CustomerController(customerApplicationMoq.Object, validatorCustomerAddRequestMoq.Object, validatorCustomerDeleteRequestValidatorMoq.Object, validatorCustomerGetRequestValidatorMoq.Object, validatorCustomerUpdateRequestValidatorMoq.Object, _cache)
-        //        .Put(Guid.NewGuid(), null).Result as ObjectResult;
-
-        //    Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest.GetHashCode());
-        //    Assert.NotNull(((BaseResponse)result.Value).Message);
-        //}
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest.GetHashCode());
+            Assert.Null(result.Value);
+        }
 
 
         //[Fact]
@@ -118,7 +130,7 @@
         //[Fact]
         //public void RemoveSucesso()
         //{
-        //    customerApplicationMoq.Setup(x => x.Delete(It.IsAny<CustomerDeleteRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, null));
+        //    customerApplicationMoq.Setup(x => x.Remove(It.IsAny<CustomerDeleteRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, null));
 
         //    validatorCustomerDeleteRequestValidatorMoq.Setup(x => x.ValidateAsync(It.IsAny<CustomerDeleteRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ValidationResult());
 
@@ -143,7 +155,7 @@
         //[Fact]
         //public void RemoveBadRequestNotExist()
         //{
-        //    customerApplicationMoq.Setup(x => x.Delete(It.IsAny<CustomerDeleteRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.BadRequest, null, new List<string>() { "Erro" }));
+        //    customerApplicationMoq.Setup(x => x.Remove(It.IsAny<CustomerDeleteRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.BadRequest, null, new List<string>() { "Erro" }));
 
         //    validatorCustomerDeleteRequestValidatorMoq.Setup(x => x.ValidateAsync(It.IsAny<CustomerDeleteRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ValidationResult());
 
@@ -155,34 +167,36 @@
         //}
 
 
-        //[Fact]
-        //public void GetByIdSucesso()
-        //{
+        [Fact]
+        public void GetByIdSucesso()
+        {
+            var guid = Guid.NewGuid();
 
-        //    customerApplicationMoq.Setup(x => x.GetByid(It.IsAny<CustomerGetRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, new CustomerResponse() { }));
+            _mediator
+               .Setup(m => m.Send(It.IsAny<CustomerGetRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, new CustomerResponse() { Id = guid, Nome = "Nome_" + guid.ToString() })  );
 
-        //    validatorCustomerGetRequestValidatorMoq.Setup(x => x.ValidateAsync(It.IsAny<CustomerGetRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ValidationResult());
+            var result = new CustomerController(_mediator.Object).Get(guid).Result as ObjectResult;
 
-        //    var result = new CustomerController(customerApplicationMoq.Object, validatorCustomerAddRequestMoq.Object, validatorCustomerDeleteRequestValidatorMoq.Object, validatorCustomerGetRequestValidatorMoq.Object, validatorCustomerUpdateRequestValidatorMoq.Object, _cache)
-        //        .Get(Guid.NewGuid()).Result as ObjectResult;
 
-        //    Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
-        //    Assert.NotNull(((BaseResponse)result.Value).Content);
-        //}
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
+            Assert.NotNull(result.Value);
+        }
 
-        //[Fact]
-        //public void GetByIdSucessoNotExist()
-        //{
-        //    customerApplicationMoq.Setup(x => x.GetByid(It.IsAny<CustomerGetRequest>())).ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.OK, null));
+        [Fact]
+        public void GetByIdSucessoNotExist()
+        {
+            var guid = Guid.NewGuid();
 
-        //    validatorCustomerGetRequestValidatorMoq.Setup(x => x.ValidateAsync(It.IsAny<CustomerGetRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(new ValidationResult());
+            _mediator
+               .Setup(m => m.Send(It.IsAny<CustomerGetRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.BadRequest));
 
-        //    var result = new CustomerController(customerApplicationMoq.Object, validatorCustomerAddRequestMoq.Object, validatorCustomerDeleteRequestValidatorMoq.Object, validatorCustomerGetRequestValidatorMoq.Object, validatorCustomerUpdateRequestValidatorMoq.Object, _cache)
-        //        .Get(Guid.NewGuid()).Result as ObjectResult;
+            var result = new CustomerController(_mediator.Object).Get(guid).Result as ObjectResult;
 
-        //    Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
-        //    Assert.Null(((BaseResponse)result.Value).Content);
-        //}
+            Assert.True(result.StatusCode == System.Net.HttpStatusCode.OK.GetHashCode());
+            Assert.Null(((BaseResponse)result.Value).Content);
+        }
 
     }
 }

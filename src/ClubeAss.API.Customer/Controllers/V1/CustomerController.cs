@@ -16,7 +16,7 @@ namespace ClubeAss.API.Customer.Controllers.V1
     {
         private readonly IMediator _mediator;
 
-        public CustomerController(IMediator mediator, ILogger<CustomerController> logger)
+        public CustomerController(IMediator mediator)
         {
             _mediator = mediator;
         }

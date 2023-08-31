@@ -1,9 +1,10 @@
-﻿using MediatR;
+﻿using ClubeAss.Domain.Commands;
+using MediatR;
 using System;
 
 namespace ClubeAss.API.Customer.ViewModel.Customer
 {
-    public class CustomerGetRequest : IRequest<CustomerResponse>
+    public class CustomerGetRequest : IRequest<BaseResponse>
     {
         public CustomerGetRequest(Guid id)
         {

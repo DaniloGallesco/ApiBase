@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ClubeAss.API.Customer.ViewModel.Customer;
+using ClubeAss.Domain.Commands;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,11 @@ namespace ClubeAss.API.Customer.Configurations
 
                 cfg.CreateMap<CustomerUpdateRequest, Domain.Customer>();
                 cfg.CreateMap<Domain.Customer, CustomerUpdateRequest>();
+
+
+                cfg.CreateMap<Domain.Customer, BaseResponse>()
+                .ForMember(dst => dst.Content,
+                    map => map.MapFrom(src => src));
 
             });
 
