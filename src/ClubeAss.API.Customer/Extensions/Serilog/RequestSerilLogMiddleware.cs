@@ -26,7 +26,7 @@ namespace ClubeAss.API.Customer.Base
 
         private string GetCorrelationId(HttpContext httpContext)
         {
-            httpContext.Request.Headers.TryGetValue("Correlation-Id", out StringValues correlationId);
+            httpContext.Request.Headers.TryGetValue("CorrelationId", out StringValues correlationId);
             return correlationId.FirstOrDefault() ?? httpContext.TraceIdentifier;
         }
     }

@@ -44,7 +44,6 @@ namespace ClubeAss.API.Customer.Configurations
             services.AddMemoryCache();
             services.AddOptions();
 
-
             return services;
         }
 
