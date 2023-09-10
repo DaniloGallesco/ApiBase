@@ -61,6 +61,24 @@ namespace ClubeAss.API.Customer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Esta versão da API esta obsoleta. Use uma das novas APIs disponíveis no explorer..
+        /// </summary>
+        public static string Deprecated {
+            get {
+                return ResourceManager.GetString("Deprecated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ocorreu um erro inesperado, tente mais tarde!.
+        /// </summary>
+        public static string ERRO_Default {
+            get {
+                return ResourceManager.GetString("ERRO-Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to O Campo {0} deve conter pelo menos {1} caracteres.
         /// </summary>
         public static string ERRO_MinimumLength {
@@ -75,6 +93,51 @@ namespace ClubeAss.API.Customer.Properties {
         public static string ERRO_NotEmpty {
             get {
                 return ResourceManager.GetString("ERRO-NotEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to © Copyright. Todos os Direitos Reservados..
+        /// </summary>
+        public static string PROJECT_Copyright {
+            get {
+                return ResourceManager.GetString("PROJECT-Copyright", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Descrição da api generica.
+        /// </summary>
+        public static string PROJECT_Description {
+            get {
+                return ResourceManager.GetString("PROJECT-Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to email@email.com.br.
+        /// </summary>
+        public static string PROJECT_Email {
+            get {
+                return ResourceManager.GetString("PROJECT-Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Api base para todos os novos projetos.
+        /// </summary>
+        public static string PROJECT_Name {
+            get {
+                return ResourceManager.GetString("PROJECT-Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://www.google.com.br/.
+        /// </summary>
+        public static string PROJECT_TermsOfService {
+            get {
+                return ResourceManager.GetString("PROJECT-TermsOfService", resourceCulture);
             }
         }
     }

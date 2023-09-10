@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using ClubeAss.API.Customer.Properties;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -53,26 +54,26 @@ namespace ClubeAss.API.Customer.Extensions.Swagger
         {
             var info = new OpenApiInfo()
             {
-                Title = "API Core - Customer",
+                Title = Resources.PROJECT_Name + " Versão: "+ desc.ApiVersion.ToString(),
                 Version = desc.ApiVersion.ToString(),
-                Description = "Api - Customer",
-                TermsOfService = new Uri("https://www.google.com.br/"),
+                Description = Resources.PROJECT_Description,
+                TermsOfService = new Uri(Resources.PROJECT_TermsOfService),
                 Contact = new Microsoft.OpenApi.Models.OpenApiContact
                 {
-                    Name = "Api Customer",
-                    Email = string.Empty,
-                    Url = new Uri("https://www.google.com.br/"),
+                    Name = Resources.PROJECT_Name + " Versão: " + desc.ApiVersion.ToString(),
+                    Email = Resources.PROJECT_Email,
+                    Url = new Uri(Resources.PROJECT_TermsOfService),
                 },
                 License = new Microsoft.OpenApi.Models.OpenApiLicense
                 {
-                    Name = "© Copyright ClubeAss. Todos os Direitos Reservados.",
-                    Url = new Uri("https://www.google.com.br/"),
+                    Name = Resources.PROJECT_Copyright,
+                    Url = new Uri(Resources.PROJECT_TermsOfService),
                 }
             };
 
             if (desc.IsDeprecated)
             {
-                info.Description += " Esta versão da API esta obsoleta. Use uma das novas APIs disponíveis no explorer.";
+                info.Description += Resources.Deprecated;
             }
 
             return info;

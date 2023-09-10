@@ -117,10 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Deprecated" xml:space="preserve">
+    <value>Esta versão da API esta obsoleta. Use uma das novas APIs disponíveis no explorer.</value>
+  </data>
+  <data name="ERRO-Default" xml:space="preserve">
+    <value>Ocorreu um erro inesperado, tente mais tarde!</value>
+  </data>
   <data name="ERRO-MinimumLength" xml:space="preserve">
     <value>O Campo {0} deve conter pelo menos {1} caracteres</value>
   </data>
   <data name="ERRO-NotEmpty" xml:space="preserve">
     <value>O campo {0} é obrigatório</value>
+  </data>
+  <data name="PROJECT-Copyright" xml:space="preserve">
+    <value>© Copyright. Todos os Direitos Reservados.</value>
+  </data>
+  <data name="PROJECT-Description" xml:space="preserve">
+    <value>Descrição da api generica</value>
+  </data>
+  <data name="PROJECT-Email" xml:space="preserve">
+    <value>email@email.com.br</value>
+  </data>
+  <data name="PROJECT-Name" xml:space="preserve">
+    <value>Api base para todos os novos projetos</value>
+  </data>
+  <data name="PROJECT-TermsOfService" xml:space="preserve">
+    <value>https://www.google.com.br/</value>
   </data>
 </root>

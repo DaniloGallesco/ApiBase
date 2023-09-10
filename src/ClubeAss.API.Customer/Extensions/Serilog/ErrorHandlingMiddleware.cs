@@ -1,4 +1,5 @@
-﻿using ClubeAss.Domain.Commands;
+﻿using ClubeAss.API.Customer.Properties;
+using ClubeAss.Domain.Commands;
 using Microsoft.AspNetCore.Http;
 using Serilog;
 using System;
@@ -43,7 +44,7 @@ namespace ClubeAss.API.Customer.Base
 #if DEBUG
             var result = JsonSerializer.Serialize(new BaseResponse(HttpStatusCode.InternalServerError, null, new List<string> { exception.Message }), options);
 #else
-            var result = JsonSerializer.Serialize(new BaseResponse(HttpStatusCode.InternalServerError, null, new List<string> {  "Ocorreu um erro inesperado, tente mais tarde!" }), options);
+            var result = JsonSerializer.Serialize(new BaseResponse(HttpStatusCode.InternalServerError, null, new List<string> {  Resources.ERRO_Default }), options);
 #endif
 
 

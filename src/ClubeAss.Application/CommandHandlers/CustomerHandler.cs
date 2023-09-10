@@ -53,9 +53,9 @@ namespace ClubeAss.Application.CommandHandlers
         {
             try
             {
-                var customers = await _clienteRepositorio.GetAllAsync();
+                var customers = await _clienteRepositorio.GetAllAsync(request.page);
 
-                if (!customers.Any())
+                if (!customers.Items.Any())
                 {
                     return new BaseResponse(System.Net.HttpStatusCode.NoContent, null, new List<string>() { "Registro não localizado" });
                 }

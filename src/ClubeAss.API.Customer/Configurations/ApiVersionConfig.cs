@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Versioning;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 
 namespace ClubeAss.API.Customer.Configurations
@@ -29,5 +32,15 @@ namespace ClubeAss.API.Customer.Configurations
 
             return services;
         }
+
+        public static IApplicationBuilder ApiVersionAppConfig(this IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseMvc()
+               .UseApiVersioning()
+               .UseMvcWithDefaultRoute();
+
+            return app;
+        }
     }
 }
+

@@ -36,6 +36,7 @@ namespace ClubeAss.API.Customer
         {
             app.AddConfigureSerilogConfig(env);
             app.AddConfigureAppConfig(env);
+            app.ApiVersionAppConfig(env);
             app.AddConfigureHealthcheckConfig(env);
             app.AddConfigureSwaggerConfig(env);
             app.AddConfigurePrometheusConfig(env);

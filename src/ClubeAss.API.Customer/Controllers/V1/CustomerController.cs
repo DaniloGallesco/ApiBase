@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 namespace ClubeAss.API.Customer.Controllers.V1
 {
     [ApiController]
-    [ApiVersion("1.0")]
-    [Route("API/v{version:apiVersion}/Customer")]
+    [ApiVersion("1.0", Deprecated = true)]
+    [ApiVersion("2.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class CustomerController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -23,9 +24,9 @@ namespace ClubeAss.API.Customer.Controllers.V1
         // GET: api/<ClienteController>
         [HttpGet]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List([FromQuery]CustomerListRequest list)
         {
-            var response = await _mediator.Send(new CustomerListRequest());
+            var response = await _mediator.Send(list);
 
             return StatusCode(response.StatusCode.GetHashCode(), response);
         }
@@ -46,6 +47,16 @@ namespace ClubeAss.API.Customer.Controllers.V1
         public async Task<IActionResult> Get(Guid id)
         {
             var response = await _mediator.Send(new CustomerGetRequest(id));
+
+            return StatusCode(response.StatusCode.GetHashCode(), response);
+        }
+
+        // GET api/<ClienteController>/5
+        [HttpGet("{id}")]
+        [MapToApiVersion("2.0")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var response = await _mediator.Send(new CustomerGetRequest(Guid.NewGuid()));
 
             return StatusCode(response.StatusCode.GetHashCode(), response);
         }

@@ -18,7 +18,7 @@ namespace ClubeAss.API.Customer.Configurations
     {
         public static IServiceCollection AddServiceAppConfig(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddControllers();
+            services.AddControllers(options => options.EnableEndpointRouting = false);
 
             services.AddRouting(options => options.LowercaseUrls = true);
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
@@ -43,6 +43,7 @@ namespace ClubeAss.API.Customer.Configurations
             services.AddResponseCaching();
             services.AddMemoryCache();
             services.AddOptions();
+
 
             return services;
         }
