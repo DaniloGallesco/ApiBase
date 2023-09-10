@@ -3,7 +3,6 @@ using ClubeAss.Domain.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace ClubeAss.API.Customer.Controllers.V1
@@ -24,7 +23,7 @@ namespace ClubeAss.API.Customer.Controllers.V1
         // GET: api/<ClienteController>
         [HttpGet]
         [MapToApiVersion("1.0")]
-        public async Task<IActionResult> List([FromQuery]CustomerListRequest list)
+        public async Task<IActionResult> List([FromQuery] CustomerListRequest list)
         {
             var response = await _mediator.Send(list);
 
@@ -67,7 +66,7 @@ namespace ClubeAss.API.Customer.Controllers.V1
         public async Task<IActionResult> Put(Guid id, [FromBody] CustomerUpdateRequestViewModel request)
         {
 
-            var response = await _mediator.Send(new CustomerUpdateRequest() { Id = id, Nome = request.Nome});
+            var response = await _mediator.Send(new CustomerUpdateRequest() { Id = id, Nome = request.Nome });
 
             return StatusCode(response.StatusCode.GetHashCode(), response);
         }

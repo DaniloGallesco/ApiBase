@@ -54,7 +54,7 @@ namespace ClubeAss.API.Customer.Extensions.Swagger
         {
             var info = new OpenApiInfo()
             {
-                Title = Resources.PROJECT_Name + " Versão: "+ desc.ApiVersion.ToString(),
+                Title = Resources.PROJECT_Name + " Versão: " + desc.ApiVersion.ToString(),
                 Version = desc.ApiVersion.ToString(),
                 Description = Resources.PROJECT_Description,
                 TermsOfService = new Uri(Resources.PROJECT_TermsOfService),

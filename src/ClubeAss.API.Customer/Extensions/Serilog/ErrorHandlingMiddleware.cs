@@ -1,5 +1,4 @@
-﻿using ClubeAss.API.Customer.Properties;
-using ClubeAss.Domain.Commands;
+﻿using ClubeAss.Domain.Commands;
 using Microsoft.AspNetCore.Http;
 using Serilog;
 using System;

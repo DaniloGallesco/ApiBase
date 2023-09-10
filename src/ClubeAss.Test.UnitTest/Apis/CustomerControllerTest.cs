@@ -5,7 +5,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Xunit;
 
@@ -100,7 +99,7 @@ namespace ClubeAss.Test.UnitTest.Apis
               .Setup(m => m.Send(It.IsAny<CustomerUpdateRequest>(), It.IsAny<CancellationToken>()))
               .ReturnsAsync(new BaseResponse(System.Net.HttpStatusCode.BadRequest, null));
 
-            var result = new CustomerController(_mediator.Object).Put(Guid.NewGuid(),new CustomerUpdateRequestViewModel()).Result as ObjectResult;
+            var result = new CustomerController(_mediator.Object).Put(Guid.NewGuid(), new CustomerUpdateRequestViewModel()).Result as ObjectResult;
 
 
             Assert.True(result.StatusCode == System.Net.HttpStatusCode.BadRequest.GetHashCode());

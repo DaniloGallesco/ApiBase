@@ -18,7 +18,7 @@ namespace ClubeAss.API.Customer.Configurations
         {
             var config = new MapperConfiguration(cfg =>
             {
-               
+
                 cfg.CreateMap<CustomerAddRequest, Domain.Customer>();
                 cfg.CreateMap<Domain.Customer, CustomerAddRequest>();
 

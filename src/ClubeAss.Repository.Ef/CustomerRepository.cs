@@ -31,7 +31,7 @@ namespace ClubeAss.Repository.Ef
                .AsNoTracking()
                .OrderBy(c => c.Id)
                .ToPaginatedRestAsync(page.Value, 10);
-            
+
             return result;
 
         }

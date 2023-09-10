@@ -99,9 +99,9 @@ namespace ClubeAss.Test.UnitTest.Application
         public void GetAllNotExist()
         {
             var guid = Guid.NewGuid();
-            CustomerRepositoryMoq.Setup(x => x.GetAllAsync()).ReturnsAsync( new List<Customer>());
+            CustomerRepositoryMoq.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<Customer>());
 
-            imapperMoq.Setup(x => x.Map<BaseResponse> (It.IsAny<IEnumerable<Customer>>()))
+            imapperMoq.Setup(x => x.Map<BaseResponse>(It.IsAny<IEnumerable<Customer>>()))
                           .Returns(new BaseResponse(System.Net.HttpStatusCode.OK) { });
 
 

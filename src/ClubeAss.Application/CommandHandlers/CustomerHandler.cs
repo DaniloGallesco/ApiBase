@@ -83,7 +83,7 @@ namespace ClubeAss.Application.CommandHandlers
                 }
 
                 return new BaseResponse(System.Net.HttpStatusCode.OK, customer, new List<string>() { "Sucesso" });
-  }
+            }
             catch (Exception ex)
             {
                 _log.LogError(ex, "Error GET customer");
